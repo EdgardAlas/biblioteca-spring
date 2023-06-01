@@ -1,12 +1,13 @@
 package com.ues.edu.sv.services;
 
-import com.ues.edu.sv.dto.libros.crear.LibroSaveDTO;
-import com.ues.edu.sv.dto.libros.editar.LibroEditDTO;
+import com.ues.edu.sv.dto.libros.crear.LibroSaveRequest;
+import com.ues.edu.sv.dto.libros.editar.LibroEditRequest;
 import com.ues.edu.sv.dto.libros.listar.LibrosResponse;
 import com.ues.edu.sv.entities.Biblioteca;
 import com.ues.edu.sv.entities.Libro;
 import com.ues.edu.sv.exceptions.ConflictException;
 import com.ues.edu.sv.exceptions.NotFoundException;
+import com.ues.edu.sv.interfaces.Crud;
 import com.ues.edu.sv.mappers.LibrosMapper;
 import com.ues.edu.sv.repositories.BibliotecaRepository;
 import com.ues.edu.sv.repositories.LibroRepository;
@@ -15,7 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LibroService {
+public class LibroService implements Crud<LibrosResponse, Integer, LibroSaveRequest, LibroEditRequest> {
 
     private final LibroRepository libroRepository;
     private final LibrosMapper librosMapper;
@@ -28,17 +29,20 @@ public class LibroService {
         this.librosMapper = librosMapper;
     }
 
+    @Override
     public Page<LibrosResponse> findAll(Pageable pageable) {
         Page<Libro> libros = this.libroRepository.findAll(pageable);
         return libros.map(this.librosMapper);
     }
 
-    public LibrosResponse findById(int id) {
+    @Override
+    public LibrosResponse findById(Integer id) {
         Libro libro = this.libroRepository.findById(id).orElseThrow(() -> new NotFoundException("Libro no encontrado"));
         return this.librosMapper.apply(libro);
     }
 
-    public LibrosResponse save(LibroSaveDTO libro) {
+    @Override
+    public LibrosResponse save(LibroSaveRequest libro) {
 
         this.bibliotecaRepository.findById(libro.biblioteca().id()).orElseThrow(() -> new NotFoundException("Biblioteca no encontrada"));
         this.libroRepository.findByNombre(libro.nombre()).ifPresent(libro1 -> {
@@ -52,7 +56,8 @@ public class LibroService {
         return librosMapper.apply(this.libroRepository.save(libroToSave));
     }
 
-    public LibrosResponse edit(int id, LibroEditDTO libro) {
+    @Override
+    public LibrosResponse edit(Integer id, LibroEditRequest libro) {
         Biblioteca biblioteca = null;
         if(
                 libro.biblioteca() != null
@@ -77,7 +82,8 @@ public class LibroService {
         return librosMapper.apply(this.libroRepository.save(libroToEdit));
     }
 
-    public void delete(int id) {
+    @Override
+    public void delete(Integer id) {
         Libro libro = this.libroRepository.findById(id).orElseThrow(() -> new NotFoundException("Libro no encontrado"));
         this.libroRepository.delete(libro);
     }

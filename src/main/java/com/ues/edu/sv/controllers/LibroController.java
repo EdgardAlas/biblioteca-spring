@@ -1,7 +1,7 @@
 package com.ues.edu.sv.controllers;
 
-import com.ues.edu.sv.dto.libros.crear.LibroSaveDTO;
-import com.ues.edu.sv.dto.libros.editar.LibroEditDTO;
+import com.ues.edu.sv.dto.libros.crear.LibroSaveRequest;
+import com.ues.edu.sv.dto.libros.editar.LibroEditRequest;
 import com.ues.edu.sv.dto.libros.listar.LibrosResponse;
 import com.ues.edu.sv.services.LibroService;
 import jakarta.validation.Valid;
@@ -33,12 +33,12 @@ public class LibroController {
     }
 
     @PostMapping
-    public ResponseEntity<LibrosResponse> save(@Valid @RequestBody LibroSaveDTO libro) {
+    public ResponseEntity<LibrosResponse> save(@Valid @RequestBody LibroSaveRequest libro) {
         return new ResponseEntity<>(this.libroService.save(libro), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LibrosResponse> edit(@PathVariable int id, @Valid @RequestBody LibroEditDTO libro) {
+    public ResponseEntity<LibrosResponse> edit(@PathVariable int id, @Valid @RequestBody LibroEditRequest libro) {
         return new ResponseEntity<>(this.libroService.edit(id, libro), HttpStatus.OK);
     }
 

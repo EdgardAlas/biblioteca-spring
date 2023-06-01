@@ -5,12 +5,12 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public record BibliotecaSaveDTO (
+public record BibliotecaSaveRequest(
         @NotNull(message = "El nombre de la biblioteca no puede ser nulo")
         @NotEmpty(message = "El nombre de la biblioteca no puede estar vacío")
         String nombre,
         
-        List<LibroSaveDto> libros
+        List<LibroSaveRequest> libros
 
 
 ) {
